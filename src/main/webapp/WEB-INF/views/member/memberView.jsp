@@ -26,12 +26,15 @@
 %>
 <section id=enroll-container>
 	<h2>회원 정보</h2>
-	<form name="memberUpdateFrm" action="" method="post">
+	<form 
+		name="memberUpdateFrm"
+		action="<%=request.getContextPath() %>/member/memberUpdate" 
+		method="post">
 		<table>
 			<tr>
 				<th>아이디<sup>*</sup></th>
 				<td>
-					<input type="text" name="memberId" id="memberId_" value="<%= memberId %>" readonly>
+					<input type="text" name="memberId" id="memberId" value="<%= memberId %>" readonly>
 				</td>
 			</tr>
 			<tr>
@@ -100,17 +103,49 @@
         <input type="button" onclick="deleteMember();" value="탈퇴"/>
 	</form>
 </section>
-<fomr action="" name="memberDelFrm" method="POST"></fomr>
+<form action="" name="memberDelFrm"></form>
 <script>
 /**
- * POST /member/memberDelete  -> POST방식은 무조건 form을 만들어야한다. 
- * GET -> a태그, location.href, form의 GET방식
+ * POST /member/memberDelete
+ * memberDelFrm 제출
  */
-	const deleteMember = () => {
-		
-	};
-</script>
+const deleteMember = () => {
+	
+};
 
+/**
+ * 폼 유효성 검사
+ */
+document.memberUpdateFrm.onsubmit = (e) => {
+	const password = document.querySelector("#password");
+	if(!/^[a-zA-Z0-9!@#$%^&*()]{4,}$/.test(password.value)){
+		alert("비밀버호는 영문자/숫자/!@#$%^&*()로 최소 4글자이상이어야 합니다.");
+		password.select();
+		return false;
+	}
+	const passwordCheck = document.querySelector("#passwordCheck");
+	if(password.value !== passwordCheck.value){
+		alert("비밀번호가 일치하지 않습니다.");
+		password.select();
+		return false;
+	}
+	
+	const memberName = document.querySelector("#memberName");
+	if(!/^[가-힣]{2,}$/.test(memberName.value)){
+		alert("한글 2글자이상 입력해주세요");
+		memberName.select();
+		return false;
+	}
+	
+	const phone = document.querySelector("#phone");
+	if(!/^010[0-9]{8}$/.test(phone.value)){
+		alert("유효한 전화번호를 입력해주세요");
+		phone.select();
+		return false;
+	}
+	
+}
+</script>
 <%!
 /**
 * compile시 메소드로 선언처리됨.

@@ -52,7 +52,7 @@ public class MemberService {
 		return result;
 	}
 
-	public int updatetMember(Member member) {
+	public int updateMember(Member member) {
 		Connection conn = getConnection();
 		int result = 0;
 		

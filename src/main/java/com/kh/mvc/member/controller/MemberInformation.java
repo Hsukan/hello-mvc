@@ -35,37 +35,38 @@ public class MemberInformation extends HttpServlet {
 		RequestDispatcher reqDispatcher = request.getRequestDispatcher("/WEB-INF/views/member/memberView.jsp");
 		reqDispatcher.forward(request, response);
 	}
-
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// 2. 사용자입력값처리
-		String memberId = request.getParameter("memberId");
-		String password = request.getParameter("password");
-		String memberName = request.getParameter("memberName");
-		String _gender = request.getParameter("gender");
-		String _birthday = request.getParameter("birthday");
-		String email = request.getParameter("email");
-		String phone = request.getParameter("phone");
-		String[] hobbies = request.getParameterValues("hobby");
-
-		Gender gender = _gender != null ? Gender.valueOf(_gender) : null;
-		String hobby = hobbies != null ? String.join(",", hobbies) : null;
-		Date birthday = (_birthday != null && !"".equals(_birthday)) ? Date.valueOf(_birthday) : null;
-
-		Member member = new Member(memberId, password, memberName, null, gender, birthday, email, phone, hobby, 0,
-				null);
-		System.out.println("member@MemberEnrollServlet = " + member);
-		
-		//3.
-		int result = memberService.updatetMember(member); 
-		System.out.println("result@MemberEnrollServlet = " + result);
-		
-		//4.
-		HttpSession session = request.getSession();
-		session.setAttribute("msg", "정보가 수정되었습니다.");
-		session.setAttribute("loginMember", member);
-		response.sendRedirect(request.getContextPath() + "/");
-	}
+	
+//	정보 수정
+//	@Override
+//	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+//			throws ServletException, IOException {
+//		// 2. 사용자입력값처리
+//		String memberId = request.getParameter("memberId");
+//		String password = request.getParameter("password");
+//		String memberName = request.getParameter("memberName");
+//		String _gender = request.getParameter("gender");
+//		String _birthday = request.getParameter("birthday");
+//		String email = request.getParameter("email");
+//		String phone = request.getParameter("phone");
+//		String[] hobbies = request.getParameterValues("hobby");
+//
+//		Gender gender = _gender != null ? Gender.valueOf(_gender) : null;
+//		String hobby = hobbies != null ? String.join(",", hobbies) : null;
+//		Date birthday = (_birthday != null && !"".equals(_birthday)) ? Date.valueOf(_birthday) : null;
+//
+//		Member member = new Member(memberId, password, memberName, null, gender, birthday, email, phone, hobby, 0,
+//				null);
+//		System.out.println("member@MemberEnrollServlet = " + member);
+//		
+//		//3.
+//		int result = memberService.updatetMember(member); 
+//		System.out.println("result@MemberEnrollServlet = " + result);
+//		
+//		//4.
+//		HttpSession session = request.getSession();
+//		session.setAttribute("msg", "정보가 수정되었습니다.");
+//		session.setAttribute("loginMember", member);
+//		response.sendRedirect(request.getContextPath() + "/");
+//	}
 
 }
