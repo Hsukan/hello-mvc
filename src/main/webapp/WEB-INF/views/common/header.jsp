@@ -10,6 +10,7 @@
 	//saveId 처리
 	String saveId = null;
 	Cookie[] cookies = request.getCookies();
+	if(cookies != null){
 	for(Cookie c : cookies){
 		String name = c.getName();
 		String value = c.getValue();
@@ -17,6 +18,8 @@
 		if("saveId".equals(name)){
 			saveId = value;
 		}
+		
+	}
 	}
 %>
 <!DOCTYPE html>

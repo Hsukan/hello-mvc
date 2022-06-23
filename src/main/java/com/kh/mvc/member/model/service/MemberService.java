@@ -49,7 +49,23 @@ public class MemberService {
 		}finally {
 			close(conn);
 		}
-		return 0;
+		return result;
+	}
+
+	public int updatetMember(Member member) {
+		Connection conn = getConnection();
+		int result = 0;
+		
+		try {
+			result = memberDao.updateMember(conn, member);
+			commit(conn);
+		}catch(Exception e) {
+			rollback(conn);
+			throw e;
+		}finally {
+			close(conn);
+		}
+		return result;
 	}
 	
 }

@@ -121,4 +121,31 @@ public class MemberDao {
 		}
 		return result;
 	}
+
+	public int updateMember(Connection conn, Member member) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String sql = prop.getProperty("updateMember");
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, member.getPassword());
+			pstmt.setString(2, member.getMemberName());
+			pstmt.setDate(3, member.getBirthday());
+			pstmt.setString(4, member.getEmail());
+			pstmt.setString(5, member.getPhone());
+			pstmt.setString(6, member.getGender() != null ? member.getGender().name() : null);
+			pstmt.setString(7, member.getHobby());
+			pstmt.setString(8, member.getMemberId());
+			
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new MemberException("정보 수정 오류!", e);
+		} finally {
+			close(pstmt);
+		}
+		
+		return result;
+	}
 }

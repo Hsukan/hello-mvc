@@ -3,12 +3,17 @@
 <%@ include file="/WEB-INF/views/common/header.jsp" %>
 <section id=enroll-container>
 	<h2>회원 가입 정보 입력</h2>
+	<!-- DML : POST, DQL : GET  -->
 	<form name="memberEnrollFrm" action="" method="POST">
 		<table>
 			<tr>
 				<th>아이디<sup>*</sup></th>
 				<td>
-					<input type="text" placeholder="4글자이상" name="memberId" id="_memberId" value="sinsa" required>
+					<input type="text" placeholder="4글자이상" name="memberId" id="_memberId" value="" required>
+					<input type="button" value="중복검사" onclick="checkIdDuplicate();" />
+					<input type="hidden" id="idValid" value="0" />
+					<%-- 중복검사전 0, 중복검사후(유효한 아이디) 1 --%>
+					
 				</td>
 			</tr>
 			<tr>
@@ -52,7 +57,7 @@
 				<td>
 					<input type="radio" name="gender" id="gender0" value="M">
 					<label for="gender0">남</label>
-					<input type="radio" name="gender" id="gender1" value="F" checked>
+					<input type="radio" name="gender" id="gender1" value="F">
 					<label for="gender1">여</label>
 				</td>
 			</tr>
@@ -71,7 +76,36 @@
 		<input type="reset" value="취소">
 	</form>
 </section>
+<form 
+	action="<%= request.getContextPath() %>/member/checkIdDuplicate"
+	name="checkIdDuplicateFrm">
+	<input type="hidden" name="memberId" />
+</form>
 <script>
+/**
+ * 사용자입력한 id 중복여부 검사
+ * - 폼을 팝업에서 제출
+ */
+const checkIdDuplicate = () => {
+	const memberId = document.querySelector("#_memberId");
+	if(!/^[a-zA-Z0-9]{4,}$/.test(memberId.value)){
+		alert("유효한 아이디를 입력해주세요.");
+		memberId.select();
+		return;
+	}
+	
+	// popup제어
+	const title = "checkIdDuplicatePopup";
+	const spec = "width=300px, height=300px";
+	const popup = open("", title, spec);
+	
+	// form제어
+	const frm = document.checkIdDuplicateFrm;
+	frm.target = title; // 폼을 제출대상이 현재 윈도우가 아닌 팝업으로 지정
+	frm.memberId.value = memberId.value;
+	frm.submit();
+};
+
 /**
  * 비밀번호 일치여부 검사
  */
@@ -85,6 +119,10 @@ document.querySelector("#passwordCheck").onblur = (e) => {
 	}
 };
 
+document.querySelector("#_memberId").onchange = (e) => {
+	document.querySelector("#idValid").value = 0;
+};
+
 /**
  * 폼 유효성 검사
  */
@@ -93,6 +131,13 @@ document.memberEnrollFrm.onsubmit = (e) => {
 	if(!/^[a-zA-Z0-9]{4,}$/.test(memberId.value)){
 		alert("아이디는 영문자/숫자로 최소 4글자이상이어야 합니다.");
 		memberId.select();
+		return false;
+	}
+	
+	const idValid = document.querySelector("#idValid");
+	if(idValid.valie !== "1"){
+		alert("아이디 중복 검사해주세요.");
+		memberId.nextElementSibling.focus();
 		return false;
 	}
 	
@@ -123,7 +168,7 @@ document.memberEnrollFrm.onsubmit = (e) => {
 		return false;
 	}
 	
-};
+}
 
 
 </script>

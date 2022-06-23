@@ -1,36 +1,37 @@
-<%@page import="java.util.Arrays"%>
 <%@page import="com.kh.mvc.member.model.dto.Gender"%>
+<%@page import="java.util.Arrays"%>
+<%@page import="java.util.List"%>
 <%@page import="java.sql.Date"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/views/common/header.jsp" %>
 <%
-	/* System.out.println("session@memberView = " + session.getAttribute("loginMember")); */
-	/* System.out.println("memberId@memberView = " + loginMember.getMemberId()); */
-	
 	String memberId = loginMember.getMemberId();
 	String password = loginMember.getPassword();
 	String memberName = loginMember.getMemberName();
-	Date birthday = loginMember.getBirthday();
-	String email = loginMember.getEmail();
+	String birthday = loginMember.getBirthday() != null ? 
+						loginMember.getBirthday().toString() : 
+							""; // null값이어도 input:datetime에서 무시함.
+	String email = loginMember.getEmail() != null ? loginMember.getEmail() : "";
 	String phone = loginMember.getPhone();
 	int point = loginMember.getPoint();
-	Gender gender = loginMember.getGender();
-	System.out.println("gender@memberView = " + gender);
-	String hobby = loginMember.getHobby();
-	System.out.println("hobbies@memberView = " + hobby);
-	String[] hobbies = hobby.split(",");
-	/* System.out.println(Arrays.asList(hobbies).contains("운동")); */
-
+	String gender = loginMember.getGender() != null ? loginMember.getGender().name() : "";
+	String hobby = loginMember.getHobby(); // 등산,게임
+	
+	List<String> hobbyList = null;
+	if(hobby != null){
+		String[] arr = hobby.split(",");
+		hobbyList = Arrays.asList(arr); // String[] -> List<String>
+	}
 %>
 <section id=enroll-container>
 	<h2>회원 정보</h2>
-	<form name="memberUpdateFrm" method="post">
+	<form name="memberUpdateFrm" action="" method="post">
 		<table>
 			<tr>
 				<th>아이디<sup>*</sup></th>
 				<td>
-					<input type="text" name="memberId" id="memberId" value="<%= memberId %>" readonly>
+					<input type="text" name="memberId" id="memberId_" value="<%= memberId %>" readonly>
 				</td>
 			</tr>
 			<tr>
@@ -42,9 +43,9 @@
 			<tr>
 				<th>패스워드확인<sup>*</sup></th>
 				<td>	
-					<input type="password" id="passwordCheck" value="" required><br>
+					<input type="password" id="passwordCheck" value="<%= password %>" required><br>
 				</td>
-			</tr> 
+			</tr>
 			<tr>
 				<th>이름<sup>*</sup></th>
 				<td>	
@@ -78,55 +79,46 @@
 			<tr>
 				<th>성별 </th>
 				<td>
-			       		 <input type="radio" name="gender" id="gender0" value="M"
-			       		 <% if(gender == Gender.M){ %>
-			       		 		checked
-			       		 <% } %>	
-			       		 >
+			       		 <input type="radio" name="gender" id="gender0" value="M" <%= "M".equals(gender) ? "checked" : "" %>>
 						 <label for="gender0">남</label>
-						 <input type="radio" name="gender" id="gender1" value="F"
-			       		 <% if(gender == Gender.F){ %>
-			       		 		checked
-			       		 <% } %>	
-						 >
+						 <input type="radio" name="gender" id="gender1" value="F" <%= "F".equals(gender) ? "checked" : "" %>>
 						 <label for="gender1">여</label>
 				</td>
 			</tr>
 			<tr>
 				<th>취미 </th>
 				<td>
-					<input type="checkbox" name="hobby" id="hobby0" value="운동" 
-					<% if(Arrays.asList(hobbies).contains("운동")){ %>
-						checked
-					<% } %>
-					><label for="hobby0">운동</label>
-					<input type="checkbox" name="hobby" id="hobby1" value="등산" 
-					<% if(Arrays.asList(hobbies).contains("등산")){ %>
-						checked
-					<% } %>
-					><label for="hobby1">등산</label>
-					<input type="checkbox" name="hobby" id="hobby2" value="독서" 
-					<% if(Arrays.asList(hobbies).contains("독서")){ %>
-						checked
-					<% } %>
-					><label for="hobby2">독서</label><br />
-					<input type="checkbox" name="hobby" id="hobby3" value="게임"
-					<% if(Arrays.asList(hobbies).contains("게임")){ %>
-						checked
-					<% } %>
-					 ><label for="hobby3">게임</label>
-					<input type="checkbox" name="hobby" id="hobby4" value="여행"
-					<% if(Arrays.asList(hobbies).contains("여행")){ %>
-						checked
-					<% } %>
-					 ><label for="hobby4">여행</label><br />
-
-
+					<input type="checkbox" name="hobby" id="hobby0" value="운동" <%= hobbyChecked(hobbyList, "운동") %>><label for="hobby0">운동</label>
+					<input type="checkbox" name="hobby" id="hobby1" value="등산" <%= hobbyChecked(hobbyList, "등산") %>><label for="hobby1">등산</label>
+					<input type="checkbox" name="hobby" id="hobby2" value="독서" <%= hobbyChecked(hobbyList, "독서") %>><label for="hobby2">독서</label><br />
+					<input type="checkbox" name="hobby" id="hobby3" value="게임" <%= hobbyChecked(hobbyList, "게임") %>><label for="hobby3">게임</label>
+					<input type="checkbox" name="hobby" id="hobby4" value="여행" <%= hobbyChecked(hobbyList, "여행") %>><label for="hobby4">여행</label><br />
 				</td>
 			</tr>
 		</table>
-        <input type="button" onclick="updateMember();" value="정보수정"/>
+        <input type="submit" value="정보수정"/>
         <input type="button" onclick="deleteMember();" value="탈퇴"/>
 	</form>
 </section>
+<fomr action="" name="memberDelFrm" method="POST"></fomr>
+<script>
+/**
+ * POST /member/memberDelete  -> POST방식은 무조건 form을 만들어야한다. 
+ * GET -> a태그, location.href, form의 GET방식
+ */
+	const deleteMember = () => {
+		
+	};
+</script>
+
+<%!
+/**
+* compile시 메소드로 선언처리됨.
+* 선언위치는 어디든 상관없다.
+*/ 
+public String hobbyChecked(List<String> hobbyList, String hobby){
+	return hobbyList != null && hobbyList.contains(hobby) ? "checked" : "";
+}
+
+%>
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>

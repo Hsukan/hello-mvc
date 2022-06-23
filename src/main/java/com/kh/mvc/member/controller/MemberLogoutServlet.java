@@ -26,7 +26,7 @@ public class MemberLogoutServlet extends HttpServlet {
 			session.invalidate();
 		}
 		
-		//2. 리다이렉트
+		//2. 리다이렉트 : DQL은 forward, DML은 리다이렉트 
 		response.sendRedirect(request.getContextPath() + "/");
 	}
 
