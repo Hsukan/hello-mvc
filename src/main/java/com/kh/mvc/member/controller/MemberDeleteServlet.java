@@ -1,15 +1,16 @@
 package com.kh.mvc.member.controller;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.kh.mvc.member.model.dto.Member;
 import com.kh.mvc.member.model.service.MemberService;
 
 /**
@@ -27,25 +28,29 @@ public class MemberDeleteServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
-			// 2. 사용자 입력값 처리
-			HttpSession session = request.getSession();
-			Member loginMember = (Member) session.getAttribute("loginMember");
-			String memberId = loginMember.getMemberId();
-			System.out.println("delete@memberId = " + memberId);
-
-			// 3. 업무 로직
-			// delete from member where member_id = ?;
+			//1. 사용자 입력값 처리
+			String memberId = request.getParameter("memberId");
+			
+			//2. 서비스로직호출
 			int result = memberService.deleteMember(memberId);
-
-			// 4. 응답
-			if (result > 0) {
-
-				if (session != null)
-					session.invalidate();
-
-				response.sendRedirect(request.getContextPath() + "/");
+			
+			// 모든 속성 제거하기
+			HttpSession session = request.getSession();
+			Enumeration<String> names = session.getAttributeNames();
+			while(names.hasMoreElements()) {
+				String name = names.nextElement();
+				session.removeAttribute(name);
 			}
+			// saveId cookie 제거
+			Cookie c = new Cookie("saveId",memberId);
+			c.setPath(request.getContextPath());
+			c.setMaxAge(0);			//쿠키의 유효기간 0=> 즉시삭제
+			response.addCookie(c);	
 
+			//3. 리다이렉트 처리
+			session.setAttribute("msg", "회원을 성공적으로 삭제했습니다.");
+			response.sendRedirect(request.getContextPath() + "/");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
