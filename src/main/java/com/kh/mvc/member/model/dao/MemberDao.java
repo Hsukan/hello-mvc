@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import com.kh.mvc.member.model.dto.Gender;
@@ -56,19 +58,7 @@ public class MemberDao {
 			rset = pstmt.executeQuery(); //0행이 반환되어도 null은 아니다
 			
 			while(rset.next()) {
-				memberId = rset.getString("member_id");
-				String password = rset.getString("password");
-				String memberName = rset.getString("member_name");
-				MemberRole memberRole = MemberRole.valueOf(rset.getString("member_role"));
-				Gender gender = Gender.valueOf(rset.getString("gender"));
-				Date birthday = rset.getDate("birthday");
-				String email = rset.getString("email");
-				String phone = rset.getString("phone");
-				String hobby = rset.getString("hobby");
-				int point = rset.getInt("point");
-				Timestamp enrollDate = rset.getTimestamp("enroll_date");
-				member = new Member(memberId, password, memberName, memberRole, gender, 
-						birthday, email, phone, hobby, point, enrollDate);
+				member = handleMemberResultset(rset);
 			}
 			
 			
@@ -81,6 +71,26 @@ public class MemberDao {
 		
 		
 		return member;
+	}
+
+	private Member handleMemberResultset(ResultSet rset) throws SQLException {
+		String memberId = rset.getString("member_id");
+		String password = rset.getString("password");
+		String memberName = rset.getString("member_name");
+		MemberRole memberRole = MemberRole.valueOf(rset.getString("member_role"));
+		
+		// Enum에 null이 전달되지 않게
+		String _gender = rset.getString("gender");
+		Gender gender = _gender != null ? Gender.valueOf(_gender) : null;
+		
+		Date birthday = rset.getDate("birthday");
+		String email = rset.getString("email");
+		String phone = rset.getString("phone");
+		String hobby = rset.getString("hobby");
+		int point = rset.getInt("point");
+		Timestamp enrollDate = rset.getTimestamp("enroll_date");
+		return new Member(memberId, password, memberName, memberRole, gender, 
+				birthday, email, phone, hobby, point, enrollDate);
 	}
 
 	/**
@@ -126,22 +136,90 @@ public class MemberDao {
 		PreparedStatement pstmt = null;
 		int result = 0;
 		String sql = prop.getProperty("updateMember");
-		
+		//updateMember = update member set member_name = ?, birthday = ?, email = ?, 
+		//phone = ?, gender = ?, hobby = ? where member_id = ?
 		try {
 			pstmt = conn.prepareStatement(sql);
 			
-			pstmt.setString(1, member.getPassword());
-			pstmt.setString(2, member.getMemberName());
-			pstmt.setDate(3, member.getBirthday());
-			pstmt.setString(4, member.getEmail());
-			pstmt.setString(5, member.getPhone());
-			pstmt.setString(6, member.getGender() != null ? member.getGender().name() : null);
-			pstmt.setString(7, member.getHobby());
-			pstmt.setString(8, member.getMemberId());
+			pstmt.setString(1, member.getMemberName());
+			pstmt.setDate(2, member.getBirthday());
+			pstmt.setString(3, member.getEmail());
+			pstmt.setString(4, member.getPhone());
+			pstmt.setString(5, member.getGender() != null ? member.getGender().name() : null);
+			pstmt.setString(6, member.getHobby());
+			pstmt.setString(7, member.getMemberId());
 			
 			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new MemberException("정보 수정 오류!", e);
+		} finally {
+			close(pstmt);
+		}
+		
+		return result;
+	}
+
+	public int updatePassword(Connection conn, String memberId, String newPassword) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String sql = prop.getProperty("updatePassowrd");
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, newPassword);
+			pstmt.setString(2, memberId);
+			result = pstmt.executeUpdate();
+			
+			
+		} catch (SQLException e) {
+			throw new MemberException("비밀번호 변경 오류!", e);
+		} finally {
+			close(pstmt);
+		}
+		
+		
+		return result;
+	}
+
+	//조회된 행이 없어도 비어있는 리스트가 넘어간다.
+	//그래서 기본값으로 null을 일단 넣어주고 선언해준다.
+	public List<Member> findAll(Connection conn) {
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		List<Member> list = new ArrayList<>();
+		String sql = prop.getProperty("findAll");
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rset = pstmt.executeQuery();
+			while(rset.next()) {
+				Member member = handleMemberResultset(rset); //member객체 반환
+				list.add(member);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			
+		}finally {
+			close(rset);
+			close(pstmt);
+		}
+		return list;
+	}
+
+	public int deleteMember(Connection conn, String memberId) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String sql = prop.getProperty("deleteMember");
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, memberId);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			throw new MemberException("회원 정보 삭제 오류!", e);
 		} finally {
 			close(pstmt);
 		}

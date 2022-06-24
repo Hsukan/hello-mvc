@@ -58,9 +58,6 @@ select * from member;
 
 commit;
 
-select * from member where member_id = 'honggd';
-
-
 -- POST /member/memberEnorll
 -- insert into member values (?, ?, ?, default, ?, ?, ?, ?, ?, default, default);
 

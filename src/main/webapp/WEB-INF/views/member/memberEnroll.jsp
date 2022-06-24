@@ -135,7 +135,7 @@ document.memberEnrollFrm.onsubmit = (e) => {
 	}
 	
 	const idValid = document.querySelector("#idValid");
-	if(idValid.valie !== "1"){
+	if(idValid.value !== "1"){
 		alert("아이디 중복 검사해주세요.");
 		memberId.nextElementSibling.focus();
 		return false;

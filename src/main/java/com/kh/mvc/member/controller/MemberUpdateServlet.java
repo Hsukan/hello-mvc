@@ -30,7 +30,6 @@ public class MemberUpdateServlet extends HttpServlet {
 		try {
 			// 1. 사용자 입력값 처리
 			String memberId = request.getParameter("memberId");
-			String password = request.getParameter("password");
 			String memberName = request.getParameter("memberName");
 			String _gender = request.getParameter("gender");
 			String _birthday = request.getParameter("birthday");
@@ -49,7 +48,7 @@ public class MemberUpdateServlet extends HttpServlet {
 									null;
 			
 			Member member = 
-					new Member(memberId, password, memberName, null, gender, 
+					new Member(memberId, null, memberName, null, gender, 
 							birthday, email, phone, hobby, 0, null);
 			System.out.println("member@MemberEnrollServlet = " + member);
 			

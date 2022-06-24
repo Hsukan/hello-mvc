@@ -19,7 +19,7 @@ import com.kh.mvc.member.model.service.MemberService;
  * Servlet implementation class MemberInformation
  */
 @WebServlet("/member/memberView")
-public class MemberInformation extends HttpServlet {
+public class MemberViewServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private MemberService memberService = new MemberService();
 	

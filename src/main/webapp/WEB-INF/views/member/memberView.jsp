@@ -7,7 +7,6 @@
 <%@ include file="/WEB-INF/views/common/header.jsp" %>
 <%
 	String memberId = loginMember.getMemberId();
-	String password = loginMember.getPassword();
 	String memberName = loginMember.getMemberName();
 	String birthday = loginMember.getBirthday() != null ? 
 						loginMember.getBirthday().toString() : 
@@ -35,18 +34,6 @@
 				<th>아이디<sup>*</sup></th>
 				<td>
 					<input type="text" name="memberId" id="memberId" value="<%= memberId %>" readonly>
-				</td>
-			</tr>
-			<tr>
-				<th>패스워드<sup>*</sup></th>
-				<td>
-					<input type="password" name="password" id="password" value="<%= password %>" required>
-				</td>
-			</tr>
-			<tr>
-				<th>패스워드확인<sup>*</sup></th>
-				<td>	
-					<input type="password" id="passwordCheck" value="<%= password %>" required><br>
 				</td>
 			</tr>
 			<tr>
@@ -100,36 +87,45 @@
 			</tr>
 		</table>
         <input type="submit" value="정보수정"/>
+        <input type="button" value="비밀번호변경" onclick="updatePassword();"/>
         <input type="button" onclick="deleteMember();" value="탈퇴"/>
 	</form>
 </section>
-<form action="" name="memberDelFrm"></form>
+<form action="<%=request.getContextPath() %>/member/memberDelete" name="memberDelFrm" method="POST">
+    <input type="hidden" name="memberId" id="memberId" value="<%= loginMember.getMemberId() %>" />
+   </form>
 <script>
+
+const updatePassword = () => {
+	//서블릿 호출
+	location.href = "<%= request.getContextPath() %>/member/passwordUpdate";	
+};
+
+
 /**
  * POST /member/memberDelete
+ * POST는 폼안에서 제출하는 방법으로만 제출할 수 있다. 
+ * POST
+ * form submit[method=POST]
+ *
+ * - GET 방식
+ * 1. a tag
+ * 2. location.href
+ * 3. form submit[method=GET]
  * memberDelFrm 제출
  */
 const deleteMember = () => {
-	
+   //memberDelFrm 제출
+   const bool = confirm("정말 탈퇴하시겠습니까?")
+   if(bool){
+       document.memberDelFrm.submit();
+   };
+   
 };
-
 /**
  * 폼 유효성 검사
  */
 document.memberUpdateFrm.onsubmit = (e) => {
-	const password = document.querySelector("#password");
-	if(!/^[a-zA-Z0-9!@#$%^&*()]{4,}$/.test(password.value)){
-		alert("비밀버호는 영문자/숫자/!@#$%^&*()로 최소 4글자이상이어야 합니다.");
-		password.select();
-		return false;
-	}
-	const passwordCheck = document.querySelector("#passwordCheck");
-	if(password.value !== passwordCheck.value){
-		alert("비밀번호가 일치하지 않습니다.");
-		password.select();
-		return false;
-	}
-	
 	const memberName = document.querySelector("#memberName");
 	if(!/^[가-힣]{2,}$/.test(memberName.value)){
 		alert("한글 2글자이상 입력해주세요");
