@@ -91,9 +91,7 @@
         <input type="button" onclick="deleteMember();" value="탈퇴"/>
 	</form>
 </section>
-<form action="<%=request.getContextPath() %>/member/memberDelete" name="memberDelFrm" method="POST">
-    <input type="hidden" name="memberId" id="memberId" value="<%= loginMember.getMemberId() %>" />
-   </form>
+<form action="<%=request.getContextPath() %>/member/memberDelete" name="memberDelFrm" method="POST"></form>
 <script>
 
 const updatePassword = () => {
