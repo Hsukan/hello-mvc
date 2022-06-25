@@ -40,4 +40,69 @@ public class HelloMvcUtils {
 		return encryptedPassword;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param cPage
+	 * @param numPerPage
+	 * @param totalContent
+	 * @param url
+	 * @return
+	 * 
+	 * totalPage 전체페이지 수
+	 * pagebarSize 한 페이지에 표시할 페이지 번호 갯수
+	 * pagebarStart ~ pagebarEnd
+	 * pageNo 증감변수
+	 * 
+	 * 1. 이전영역
+	 * 2. pageNo영역
+	 * 3. 다음영역
+	 * 
+	 */
+	public static String getPagebar(int cPage, int numPerPage, int totalContent, String url) {
+		StringBuilder pagebar = new StringBuilder();
+		url += (url.indexOf("?") < 0) ? "?cPage=" : "&cPage=";
+		int totalPage = (int) Math.ceil((double) totalContent / numPerPage);
+		int pagebarSize = 5;
+		int pagebarStart = ((cPage - 1) / pagebarSize * pagebarSize) + 1;
+		int pagebarEnd = pagebarStart + pagebarSize - 1;
+		int pageNo = pagebarStart; // 초기값 -> max:pagebarEnd
+		
+		
+		//이전영역
+		if(pageNo == 1) {
+			
+		}
+		else {
+			pagebar.append("<a href='"+ url + (pageNo - 1) +"'>이전</a>\n");
+			
+		}
+		
+		//pageNo
+		while(pageNo <= pagebarEnd && pageNo <= totalPage) {
+			//현재페이지
+			if(pageNo == cPage) {
+				pagebar.append("<span class='cPage'>" + pageNo + "</span>\n");
+			}
+			//현재페이지가 아닌 경우
+			else {
+				pagebar.append("<a href='" + url + pageNo + "'>" + pageNo + "</a>\n");
+				
+			}
+			
+			pageNo++;
+		}
+		
+		//다음영역
+		if(pageNo > totalPage) {
+			
+		}
+		else {
+			//while문을 탈출할때 +1 상태로 나오기 때문에 그대로 쓸 수 있다.
+			pagebar.append("<a href='" + url + pageNo + "'>다음</a>\n");
+		}
+		
+		return pagebar.toString();
+	}
+	
 }

@@ -34,8 +34,11 @@ public class MemberDeleteServlet extends HttpServlet {
 			//2. 서비스로직호출
 			int result = memberService.deleteMember(memberId);
 			
-			// 모든 속성 제거하기
+			// 모든 속성 제거하기 -> session.invaild써도 됨
+			
 			HttpSession session = request.getSession();
+//			session.invalidate();로 한번에 지울 수 있다. -> 이걸 쓰면 헤더에 메세지전송을 못한다.
+			//세션을 지우고 밑에서 세션에 다시 msg를 넣기 때문에 안됨.
 			Enumeration<String> names = session.getAttributeNames();
 			while(names.hasMoreElements()) {
 				String name = names.nextElement();
