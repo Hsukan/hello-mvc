@@ -36,6 +36,8 @@ public class MemberViewServlet extends HttpServlet {
 		reqDispatcher.forward(request, response);
 	}
 	
+	//따로 서블릿을 만들어서 관리하자.
+	
 //	정보 수정
 //	@Override
 //	protected void doPost(HttpServletRequest request, HttpServletResponse response)

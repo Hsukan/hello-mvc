@@ -30,7 +30,7 @@ div#search-gender {
 }
 </style>
 <script>
-window.onload = (e) => {
+window.addEventListener('load',(e) => {
 	document.querySelector("select#searchType").onchange = (e) => {
 		document.querySelectorAll(".search-type").forEach((div, index) => {
 			div.style.display = "none";			
@@ -43,7 +43,7 @@ window.onload = (e) => {
 		}
 		document.querySelector(`#search-\${id}`).style.display = "inline-block";
 	}
-};
+});
 </script>
 <section id="memberList-container">
 	<h2>회원관리</h2>
@@ -113,7 +113,10 @@ window.onload = (e) => {
 				<td><%= m.getMemberId() %></td>
 				<td><%= m.getMemberName() %></td>
 				<td>
-					<select>
+					<!-- key : data-member-id , value : "<%= m.getMemberId() %>" -->
+					<!-- select.dataset. -->
+					<!-- 대시부분이 카멜표기법으로 저장됨 -->
+					<select class="member-role" data-member-id="<%= m.getMemberId() %>">
 						<option value="A" <%= MemberRole.A == m.getMemberRole() ? "selected" : "" %>>관리자</option>
 						<option value="U" <%= MemberRole.U == m.getMemberRole() ? "selected" : "" %>>일반</option>
 					</select>	
@@ -136,4 +139,30 @@ window.onload = (e) => {
 		<%= request.getAttribute("pagebar") %>
 	</div>
 </section>
+<form action="<%= request.getContextPath() %>/admin/memberRoleUpdate" 
+method="POST"
+name="memberRoleUpdateFrm">
+<input type="hidden" name="memberId" />
+<input type="hidden" name="memberRole" />
+</form>
+
+<script>
+	document.querySelectorAll(".member-role").forEach((select, index) => {
+		select.onchange = (e) => {
+			console.log(e.target.value);
+			console.log(e.target.dataset.memberId);
+			
+			if(confirm(`해당 회원의 권한을 \${e.target.value}로 변경하시겠습니까?`)){
+				const frm = document.memberRoleUpdateFrm;
+				frm.memberId.value = e.target.dataset.memberId;
+				frm.memberRole.value = e.target.value;
+				frm.submit();
+			}
+			else{
+				//취소시 원상복구
+				e.target.querySelector("[selected]").selected = true;
+			}
+		};
+	});
+</script>
 <%@ include file="/WEB-INF/views/common/footer.jsp" %>

@@ -26,7 +26,8 @@ public class AdminMemberListServlet extends HttpServlet {
 	/**
 	 * 
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		try {
 			// 1. 사용자 입력값
 			int cPage = 1;
@@ -34,11 +35,10 @@ public class AdminMemberListServlet extends HttpServlet {
 			try {
 				cPage = Integer.parseInt(request.getParameter("cPage"));
 			} catch (NumberFormatException e) {
-				//기본값 처리.
+				// 기본값 처리.
 				// cPage에 오류가 생기면 값이 대입이안되고 계속 1로 기본값 유지
 			}
-			
-			
+
 			// 2. 업무
 			// a. content 영역 - paging query
 			int start = (cPage - 1) * numPerPage + 1;
@@ -46,31 +46,28 @@ public class AdminMemberListServlet extends HttpServlet {
 			Map<String, Object> param = new HashMap<>();
 			param.put("start", start);
 			param.put("end", end);
-			
-			System.out.printf("cPage = %s, numPerPage = %s, start = %s, end = %s%n",
-					cPage, numPerPage, start, end);
-			
+
+			System.out.printf("cPage = %s, numPerPage = %s, start = %s, end = %s%n", cPage, numPerPage, start, end);
+
 			List<Member> list = memberService.findAll(param);
 			System.out.println("list = " + list);
-			
+
 			// b. pagebar 영역
 			// select count(*) from member
 			int totalContent = memberService.getTotalContent();
 			System.out.println("totalContent = " + totalContent);
-			
+
 			String url = request.getRequestURI();
-			
+
 			String pagebar = HelloMvcUtils.getPagebar(cPage, numPerPage, totalContent, url);
 			System.out.println("pagebar = " + pagebar);
-			
+
 			// 3. view단 응답처리
 			request.setAttribute("list", list);
 			request.setAttribute("pagebar", pagebar);
-			request.getRequestDispatcher("/WEB-INF/views/admin/memberList.jsp")
-			.forward(request, response);
-			
-		}
-		catch(Exception e) {
+			request.getRequestDispatcher("/WEB-INF/views/admin/memberList.jsp").forward(request, response);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
 		}

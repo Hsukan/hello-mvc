@@ -316,4 +316,25 @@ public class MemberDao {
 		
 		return totalContent;
 	}
+
+	public int updateMemberRole(Connection conn, Member member) {
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String sql = prop.getProperty("updateMemberRole");
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, member.getMemberRole().name()); //ENUM이라 마지막에 name을 붙여주면된다.
+			pstmt.setString(2, member.getMemberId());
+			result = pstmt.executeUpdate();
+		}
+		catch(Exception e) {
+			throw new MemberException("회원 권한 수정 오류!", e);
+		}
+		finally {
+			close(pstmt);
+		}
+		
+		return result;
+	}
 }

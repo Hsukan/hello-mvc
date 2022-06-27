@@ -55,7 +55,10 @@ span#duplicated {
 	const closePopup = () => {
 		// opener 부모윈도우객체
 		const frm = opener.document.memberEnrollFrm;
+		//히든폼으로 넘어온 idVaild값을 1로 만들어주어 가입이 가능하게 해준다.
 		frm.idValid.value = 1;
+		
+		//그리고 부모윈도우에서 아이디인풋의 value값을 중복검사를 진행한 아이디로 적어줌.
 		frm.memberId.value = "<%= request.getParameter("memberId") %>";
 		
 		self.close(); // 현재창 닫기

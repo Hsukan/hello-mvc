@@ -15,7 +15,7 @@
 	for(Cookie c : cookies){
 		String name = c.getName();
 		String value = c.getValue();
-		System.out.println("[cookie]" + name + " = " + value);
+		System.out.println("[cookie]" + name + " = " + value); //[cookie]saveId = admin
 		if("saveId".equals(name)){
 			saveId = value;
 		}
@@ -37,6 +37,7 @@
 		alert("<%= msg %>");
 <% } %>
 
+//로그인 시 아이디와 비밀번호 유효성 검사.
 <% if(loginMember == null){ %>
 		document.loginFrm.onsubmit = (e) => {
 			const memberId = document.querySelector("#memberId");
@@ -64,15 +65,18 @@
 		<header>
 			<h1>Hello MVC</h1>
 			<div class="login-container">
+			<!-- 메인화면에서 세션에 로그인멤버 정보가 없을 경우 로그인창이 보이게 해줌 -->
 			<% if(loginMember == null) { %>
 			<%-- <% System.out.println(request.getContextPath()); %> --%><!--/mvc  -->
 				<!-- 로그인폼 시작 -->
 				<form id="loginFrm" name="loginFrm" action="<%= request.getContextPath()%>/member/login" method="post">
 					<table>
 						<tr>
+							<!-- saveId값이 있을 경우 아이디 인풋에 넣어줌. -->
 							<td><input type="text" name="memberId" id="memberId"
 								placeholder="아이디" tabindex="1" 
 								value="<%= saveId != null ? saveId : "" %>"></td>
+								<!-- 로그인(submit)버튼 -->
 							<td><input type="submit" value="로그인" tabindex="3"></td>
 						</tr>
 						<tr>
@@ -90,6 +94,7 @@
 					</table>
 				</form>
 				<!-- 로그인폼 끝-->
+				<!-- 로그인멤버가 있을경우 로그인 후 화면을 보여줌. -->
 			<% } else { %>
 				<table id="login">
 					<tr>
@@ -112,7 +117,7 @@
 				<ul class="main-nav">
 					<li class="home"><a href="<%= request.getContextPath() %>">Home</a></li>
 					<li class="notice"><a href="#">공지사항</a></li>
-					<li class="board"><a href="#">게시판</a></li>
+					<li class="board"><a href="<%= request.getContextPath() %>/board/boardList">게시판</a></li>
 					<% if(loginMember != null && loginMember.getMemberRole() == MemberRole.A){ %>
 					<li class="admin"><a href="<%= request.getContextPath()%>/admin/memberList">회원관리</a></li>
 					<% } %>

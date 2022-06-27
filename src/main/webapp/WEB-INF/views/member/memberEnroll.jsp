@@ -4,6 +4,7 @@
 <section id=enroll-container>
 	<h2>회원 가입 정보 입력</h2>
 	<!-- DML : POST, DQL : GET  -->
+	<!-- action에 내용이 없다면 동일 url로 요청함 -->
 	<form name="memberEnrollFrm" action="" method="POST">
 		<table>
 			<tr>
@@ -76,6 +77,7 @@
 		<input type="reset" value="취소">
 	</form>
 </section>
+<!-- 중복검사 servlet -->
 <form 
 	action="<%= request.getContextPath() %>/member/checkIdDuplicate"
 	name="checkIdDuplicateFrm">
@@ -103,6 +105,8 @@ const checkIdDuplicate = () => {
 	const frm = document.checkIdDuplicateFrm;
 	frm.target = title; // 폼을 제출대상이 현재 윈도우가 아닌 팝업으로 지정
 	frm.memberId.value = memberId.value;
+	//아래쪽에 아이디중복검사 폼을 따로 만들어서 회원가입에서 중복검사 클릭시 밑에 폼이 제출되도록 되어있다.
+	//input태그의 name이 둘다 memberId라서 아이디중복검사로도 제출이 됨.
 	frm.submit();
 };
 

@@ -34,6 +34,7 @@ public class CheckIdDuplicateServlet extends HttpServlet {
 		
 		// 3. 업무로직
 		Member member = memberService.findById(memberId);
+		//member(찾은 유저아이디)가 null이어야 사용가능하므로 null이 true
 		boolean available = member == null;
 		System.out.println("available = " + available);
 		

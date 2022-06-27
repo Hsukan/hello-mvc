@@ -42,7 +42,7 @@ public class MemberLoginServlet extends HttpServlet {
 			System.out.println("member@MemberLoginServlet = " + member);
 			
 			HttpSession session = request.getSession(true); //세션이 존재하지 않으면, 새로 생성해서 반환 -> true는 생략 가능
-			System.out.println(session.getId()); //클라이언트 쪽과 동일
+			System.out.println("session@MemberLoginServlet = " + session.getId()); //클라이언트 쪽과 동일
 			
 			//로그인 성공
 			if(member != null && password.equals(member.getPassword())) {
